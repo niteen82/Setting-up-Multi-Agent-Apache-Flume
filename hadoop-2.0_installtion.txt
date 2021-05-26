@@ -1,0 +1,120 @@
+ check ubuntu version:  lsb_release -a  
+
+ssh localhost
+1.If sshd service is not running(if u get error like port 22: Connection refused while running command "ssh localhost") then run
+
+sudo apt-get install openssh-server
+
+
+2.To configure passwordless connection
+i. Run cd $HOME
+ii.ssh-keygen -t rsa -P ""
+iii.cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+iv.chmod 644 $HOME/.ssh/authorized_keys
+v. ssh localhost (should not ask for password).
+ 
+3. Extract the tar file of jdk
+i. Go into the folder where jdk tar is present.
+ii. Run tar -xvzf jdk-1.8_60 (jdk-1.8_60 is the name of the jdk tar file)
+iii. Go into the jdk extracted folder and run "pwd" the output shown is the path of JAVA_HOME.
+
+4.Extract the Hadoop tar file.
+
+tar -xvzf hadoop-2.6.5.tar.gz
+
+5.Go into the etc/hadoop folder of hadoop and edit the following configuration files related to hadoop.
+
+i.core-site.xml
+
+<property>
+<name>fs.default.name</name>
+<value>hdfs://localhost:9000</value>
+</property>
+
+ii.hdfs-site.xml
+
+<property>
+<name>dfs.replication</name>
+<value>1</value>
+</property>
+
+<property>
+<name>dfs.name.dir</name>
+<value>/home/niks/metadata/dfs/name</value>
+</property>
+
+<property>
+<name>dfs.data.dir</name>
+<value>/home/niks/metadata/dfs/data</value>
+</property>
+
+iii.yarn-site.xml
+
+<property>
+<name>yarn.nodemanager.aux-services</name>
+<value>mapreduce_shuffle</value>
+</property>
+
+iv.mapred-site.xml
+
+<property> 
+<name>mapreduce.framework.name</name>
+<value>yarn</value>
+</property>
+
+v.hadoop-env.sh
+Copy and paste the JAVA_HOME path in this file as obtained through step3.
+JAVA_HOME=/home/niks/Desktop/jdk1.8.0_121
+
+nano .bashrc
+^O  and ^X
+
+
+vim
+sudo apt-get install vim
+
+vim .bashrc
+export HADOOP_HOME=/home/niks/Desktop/hadoop-2.6.0
+export JAVA_HOME=/home/niks/Desktop/jdk1.8.0_91
+export PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$JAVA_HOME/bin:$PATH 
+
+ESC :wq
+
+
+. ./.bashrc
+
+6.Format the Namenode
+Go into the bin folder of hadoop and run
+./hadoop namenode -format
+
+if error then use sudo su
+
+7.Start the hadoop services
+Go into the sbin folder of hadoop 
+Run ./start-all.sh
+
+7a. jps JVM process status
+
+7b. Accessing Hadoop on Browser	http://localhost:50070/
+
+7c. Verify All Applications for Cluster http://localhost:8088/
+  
+
+8. Verify whether the service are started
+Run ps -ef|grep "name of daemon"
+
+If the process is listed then the daemon is running if not listed go into the logs folder of hadoop and check the log file of that particular daemon for error.
+
+
+hdfs dfsadmin -safemode leave
+
+
+importing and exporting data from and to LOCAL FILE
+
+1. create folder: hadoop fs -mkdir /home/niks/Datatransfer
+
+2. hadoop fs -put /home/niks/Desktop/abc /home/niks/Datatransfer
+
+3. hadoop fs -ls /home/niks/Datatransfer
+
+4. hadoop fs -cat /home/niks/Datatransfer/abc
