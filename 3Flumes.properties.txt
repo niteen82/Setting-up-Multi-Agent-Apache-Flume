@@ -1,0 +1,53 @@
+#These statements are for agentA works on Node A
+agentA.sources = spoolDirSource
+agentA.sinks = avroSink
+agentA.channels = memChannel
+
+agentA.sources.spoolDirSource.type = spooldir
+agentA.sources.spoolDirSource.spoolDir = /home/biadmin/MyDataFolder
+agentA.sinks.avroSink.type = avro
+agentA.sinks.avroSink.hostname = bivm
+agentA.sinks.avroSink.port = 50001
+agentA.channels.memChannel.type = memory
+agentA.channels.memChannel.capacity = 100
+
+agentA.sources.spoolDirSource.channels = memChannel
+agentA.sinks.avroSink.channel = memChannel
+
+#These statements are for agentB works on Node B
+agentB.sources = avroSource
+agentB.sinks = avroSink
+agentB.channels = memChannel
+
+agentB.sources.avroSource.type = avro
+agentB.sources.avroSource.bind = bivm
+agentB.sources.avroSource.port = 50001
+agentB.sources.avroSource.interceptors = ts
+agentB.sources.avroSource.interceptors.ts.type = timestamp
+agentB.sinks.avroSink.type = avro
+agentB.sinks.avroSink.hostname = bivm
+agentB.sinks.avroSink.port = 50002
+agentB.channels.memChannel.type = memory
+agentB.channels.memChannel.capacity = 100
+
+agentB.sources.avroSource.channels = memChannel
+agentB.sinks.avroSink.channel = memChannel
+
+#These statements are for agentC works on Node C
+agentC.sources = avroSource
+agentC.sinks = hdfsSink
+agentC.channels = memChannel
+
+agentC.sources.avroSource.type = avro
+agentC.sources.avroSource.bind = bivm
+agentC.sources.avroSource.port = 50002
+agentC.sinks.hdfsSink.type = hdfs
+agentC.sinks.hdfsSink.hdfs.path = hdfs://bivm:9000/user/biadmin/flume/%y-%m-%d/
+agentC.sinks.hdfsSink.hdfs.filePrefix = Log
+agentC.sinks.hdfsSink.hdfs.writeFormat = Text
+agentC.sinks.hdfsSink.hdfs.fileType = DataStream
+agentC.channels.memChannel.type = memory
+agentC.channels.memChannel.capacity = 100
+
+agentC.sources.avroSource.channels = memChannel
+ agentC.sinks.hdfsSink.channel = memChannel
